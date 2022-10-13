@@ -1,0 +1,1162 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "BooksReading API docs",
+    "description": "API documentation for GoIT final team project 'BooksReading'",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "servers": [{ "url": "https://book-reading-08.herokuapp.com" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Book",
+      "description": "Library endpoints"
+    },
+    {
+      "name": "Train",
+      "description": "Training endpoints"
+    }
+  ],
+
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User registration",
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "409": {
+            "description": "Email is already in use",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User authentication",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Email is wrong / Password is wrong",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh token",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "RefreshToken object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google authentication",
+        "responses": {
+          "200": {
+            "description": "Successful operation (redirect to front-end with name, email, access_token, refreshToken and sid in query). Then use GET /user/books",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/auth/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Logout",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/book": {
+      "post": {
+        "tags": ["Book"],
+        "summary": "Add new book to library",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "requestBody": {
+          "description": "Book's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddBookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddBookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": ["Book"],
+        "summary": "Get all books",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/book/:bookId": {
+      "patch": {
+        "tags": ["Book"],
+        "summary": "Add book's rating and resume",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "description": "Book's id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Book's resume object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeBookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeBookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / Invalid 'bookId' / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/train": {
+      "post": {
+        "tags": ["Train"],
+        "summary": "Add new training",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "requestBody": {
+          "description": "Train's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTrainingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddTrainingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": ["Train"],
+        "summary": "Get Train",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Train"],
+        "summary": "Delete Train",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid request body / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/train/statistic": {
+      "patch": {
+        "tags": ["Train"],
+        "summary": "Add Train statistic",
+        "security": [{ "Bearer": [] }],
+        "parameters": [],
+        "requestBody": {
+          "description": "Train's statistic",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingStatisticRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingStatisticResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / Invalid 'bookId' / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/train/:bookId/status": {
+      "patch": {
+        "tags": ["Train"],
+        "summary": "Change Train status",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookId",
+            "description": "Book's id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Book's resume object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingStatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body / Invalid 'bookId' / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "required": ["name", "email", "password", "confirmPassword"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Test",
+            "minLength": 3,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email",
+            "minLength": 10,
+            "maxLength": 63
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123",
+            "minLength": 6,
+            "maxLength": 30
+          },
+          "confirmPassword": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123",
+            "minLength": 6,
+            "maxLength": 30
+          }
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Session's access token (needed for all requests)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Session's refresh token (needed for /auth/refresh)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+          },
+          "sid": {
+            "type": "string",
+            "description": "Session's id (needed for /auth/refresh)",
+            "example": "507f1f77bcf86cd799439010"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "507f1f77bcf86cd799439011"
+              }
+            }
+          }
+        }
+      },
+      "RefreshTokenRequest": {
+        "required": ["sid"],
+        "type": "object",
+        "properties": {
+          "sid": {
+            "type": "string",
+            "description": "User's session id",
+            "example": "633adf04e5361c78572ea435"
+          }
+        }
+      },
+      "RefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "sid": {
+            "type": "string",
+            "description": "Session's id (needed for /auth/refresh)",
+            "example": "507f1f77bcf86cd799439010"
+          },
+          "newToken": {
+            "type": "string",
+            "description": "Session's access token (needed for all requests)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+          },
+          "newRefreshToken": {
+            "type": "string",
+            "description": "Session's refresh token (needed for /auth/refresh)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+          }
+        }
+      },
+      "CurrentUserResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email",
+            "minLength": 10,
+            "maxLength": 63
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123",
+            "minLength": 6,
+            "maxLength": 30
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Session's access token (needed for all requests)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Session's refresh token (needed for /auth/refresh)",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+          },
+          "sid": {
+            "type": "string",
+            "description": "Session's id (needed for /auth/refresh)",
+            "example": "507f1f77bcf86cd799439010"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "507f1f77bcf86cd799439011"
+              }
+            }
+          }
+        }
+      },
+      "AddBookRequest": {
+        "required": ["title", "author", "publicDate", "amountPages"],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "The Book of Five Rings",
+            "description": "Book's title",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "author": {
+            "type": "string",
+            "example": "Miyamoto Musashi",
+            "description": "Book's author",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "publicDate": {
+            "type": "integer",
+            "example": 1900,
+            "description": "Book's publish year"
+          },
+          "amountPages": {
+            "type": "integer",
+            "example": 110,
+            "minLength": 1,
+            "description": "Book's total amount of pages",
+            "minimum": 1,
+            "maximum": 9999
+          }
+        }
+      },
+      "AddBookResponse": {
+        "type": "",
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "example": "The Book of Five Rings",
+                "description": "Book's title"
+              },
+              "author": {
+                "type": "string",
+                "example": "Miyamoto Musashi",
+                "description": "Book's author"
+              },
+              "publicDate": {
+                "type": "integer",
+                "example": 1643,
+                "description": "Book's publish year"
+              },
+              "amountPages": {
+                "type": "integer",
+                "example": 110,
+                "description": "Book's total amount of pages"
+              },
+              "status": {
+                "type": "string",
+                "example": "goingToRead",
+                "description": "Book's status"
+              },
+              "rating": {
+                "type": "integer",
+                "example": 0,
+                "description": "Book's rating"
+              },
+              "resume": {
+                "type": "string",
+                "example": "",
+                "description": "Book's resume"
+              },
+              "owner": {
+                "type": "string",
+                "example": "633409513a89db83049541ea",
+                "description": "Book's owner"
+              },
+              "inTrain": {
+                "type": "boolean",
+                "example": "false",
+                "description": "Book's train status"
+              },
+              "_id": {
+                "type": "string",
+                "example": "507f1f77bcf86cd799439013",
+                "description": "Book's id"
+              }
+            }
+          }
+        }
+      },
+      "GetBookResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "description": "User's library",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013",
+                  "description": "Book's id"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "The Book of Five Rings",
+                  "description": "Book's title"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "Miyamoto Musashi",
+                  "description": "Book's author"
+                },
+                "publicDate": {
+                  "type": "integer",
+                  "example": 1900,
+                  "description": "Book's publish year"
+                },
+                "amountPages": {
+                  "type": "integer",
+                  "example": 110,
+                  "description": "Book's total amount of pages"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "goingToRead",
+                  "description": "Book's status"
+                },
+                "rating": {
+                  "type": "integer",
+                  "example": 0,
+                  "description": "Book's rating"
+                },
+                "resume": {
+                  "type": "string",
+                  "example": "",
+                  "description": "Book's resume"
+                },
+                "owner": {
+                  "type": "string",
+                  "example": "633409513a89db83049541ea",
+                  "description": "Book's owner"
+                },
+                "inTrain": {
+                  "type": "boolean",
+                  "example": "false",
+                  "description": "Book's train status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ResumeBookRequest": {
+        "required": ["rating", "resume"],
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "example": 5,
+            "description": "Book's rating",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "resume": {
+            "type": "string",
+            "example": "Book is good",
+            "description": "Book's resume",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        }
+      },
+      "ResumeBookResponse": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "example": 5,
+            "description": "Book's rating"
+          },
+          "resume": {
+            "type": "string",
+            "example": "Book is good",
+            "description": "Book's resume"
+          }
+        }
+      },
+      "AddTrainingRequest": {
+        "required": ["startDate", "finishDate", "book"],
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "948372793",
+            "description": "Training start date "
+          },
+          "finishDate": {
+            "type": "string",
+            "example": "948372793",
+            "description": "Training finish date "
+          },
+          "book": {
+            "type": "array",
+            "description": "User's  books in trainings",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013",
+                  "description": "Book's id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "948372793",
+            "description": "Training start date "
+          },
+          "finishDate": {
+            "type": "string",
+            "example": "948372793",
+            "description": "Training finish date "
+          },
+          "owner": {
+            "type": "string",
+            "example": "633409513a89db83049541ea",
+            "description": "Book's owner"
+          },
+          "book": {
+            "type": "array",
+            "description": "User's library",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Book of Five Rings",
+                  "description": "Book's title"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "Miyamoto Musashi",
+                  "description": "Book's author"
+                },
+                "publicDate": {
+                  "type": "integer",
+                  "example": 1900,
+                  "description": "Book's publish year"
+                },
+                "amountPages": {
+                  "type": "integer",
+                  "example": 110,
+                  "description": "Book's total amount of pages"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "readingNow",
+                  "description": "Book's status"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013",
+                  "description": "Book's id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GetTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439013",
+            "description": "Training id"
+          },
+          "startDate": {
+            "type": "number",
+            "example": 948372793,
+            "description": "Training start date "
+          },
+          "finishDate": {
+            "type": "number",
+            "example": 948372793,
+            "description": "Training finish date "
+          },
+          "owner": {
+            "type": "string",
+            "example": "633409513a89db83049541ea",
+            "description": "Book's owner"
+          },
+          "book": {
+            "type": "array",
+            "description": "User's library",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Book of Five Rings",
+                  "description": "Book's title"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "Miyamoto Musashi",
+                  "description": "Book's author"
+                },
+                "publicDate": {
+                  "type": "integer",
+                  "example": 1900,
+                  "description": "Book's publish year"
+                },
+                "amountPages": {
+                  "type": "integer",
+                  "example": 110,
+                  "description": "Book's total amount of pages"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "readingNow",
+                  "description": "Book's status"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013",
+                  "description": "Book's id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TrainingStatisticRequest": {
+        "required": ["date", "createAt", "amountPages"],
+        "type": "array",
+        "description": "User's  books in trainings",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "example": 1664902189309,
+              "description": "Date of add statistic"
+            },
+            "createAt": {
+              "type": "string",
+              "example": 1664902189309,
+              "description": "Create date of add statistic"
+            },
+            "amountPages": {
+              "type": "integer",
+              "example": 10,
+              "description": "Amount of pages reading today"
+            }
+          }
+        }
+      },
+      "TrainingStatisticResponse": {
+        "type": "array",
+        "description": "User's  books in trainings",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439013",
+              "description": "Statistic id"
+            },
+            "date": {
+              "type": "string",
+              "example": 1664902189309,
+              "description": "Date of add statistic"
+            },
+            "createAt": {
+              "type": "string",
+              "example": 1664902189309,
+              "description": "Create date of add statistic"
+            },
+            "amountPages": {
+              "type": "integer",
+              "example": 10,
+              "description": "Amount of pages reading today"
+            }
+          }
+        }
+      },
+      "TrainingStatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "alreadyRead",
+            "description": "Book's status"
+          }
+        }
+      },
+      "TrainingStatusResponse": {
+        "type": "array",
+        "description": "User's  books alreadyRead",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "example": "The Book of Five Rings",
+              "description": "Book's title"
+            },
+            "author": {
+              "type": "string",
+              "example": "Miyamoto Musashi",
+              "description": "Book's author"
+            },
+            "publicDate": {
+              "type": "integer",
+              "example": 1643,
+              "description": "Book's publish year"
+            },
+            "amountPages": {
+              "type": "integer",
+              "example": 110,
+              "description": "Book's total amount of pages"
+            },
+            "status": {
+              "type": "string",
+              "example": "alreadyRead",
+              "description": "Book's status"
+            },
+            "_id": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439013",
+              "description": "Book's id"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
